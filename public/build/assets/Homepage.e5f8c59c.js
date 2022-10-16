@@ -1,0 +1,1 @@
+import{j as s,a as t,H as a}from"./app.8395c69d.js";function l(e){return console.log(e),s("div",{className:"flex justify-center items-center min-h-screen text-white text-2xl bg-neutral-800",children:[t(a,{title:e.title}),t("p",{children:e.desc})]})}export{l as default};
