@@ -17,7 +17,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = new NewsCollection(News::paginate(6));
+        $news = new NewsCollection(News::OrderByDesc('id')->paginate(6));
         return Inertia::render('Homepage', [
             'title' => "MiftakhulNews",
             'desc' => "Welcome to MiftakhulNews University",
@@ -58,9 +58,12 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(News $news)
     {
-        //
+        $myNews = $news::where('author', auth()->user()->email)->get();
+        return Inertia::render('Dashboard', [
+            'myNews' => $myNews,
+        ]);
     }
 
     /**
@@ -69,9 +72,11 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(News $news, Request $request)
     {
-        //
+        return Inertia::render('EditNews', [
+            'myNews' => $news->find($request->id)
+        ]);
     }
 
     /**
@@ -81,9 +86,14 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        News::where('id', $request->id)->update([
+            'title' => $request->title,
+            'desc' => $request->desc,
+            'category' => $request->category,
+        ]);
+        return to_route('dashboard')->with('message', 'Update Berita Berhasil');
     }
 
     /**
@@ -92,8 +102,9 @@ class NewsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        $news = News::find($request->id);
+        $news->delete();
     }
 }

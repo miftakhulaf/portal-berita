@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/inertia-react";
+import { Head, Link } from "@inertiajs/inertia-react";
 import { Inertia } from "@inertiajs/inertia";
 
 export default function Dashboard(props) {
@@ -15,12 +15,22 @@ export default function Dashboard(props) {
             desc,
             category,
         };
-        Inertia.post("/news", "data");
+
+        Inertia.post("/news", data);
         setIsNotif(true);
         setTitle("");
         setDesc("");
         setCategory("");
-    };
+    }
+
+    useEffect(() => {
+        if(!props.myNews) {
+            Inertia.get('/news')
+        }
+        return;
+    }, [])
+
+       
 
     return (
         <AuthenticatedLayout
@@ -37,25 +47,26 @@ export default function Dashboard(props) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="p-6 bg-white border-b border-gray-200">
-                    {isNotif && <div className="alert alert-success shadow-lg">
-                            <div>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="stroke-current flex-shrink-0 h-6 w-6"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
-                                </svg>
-                                <span>{props.flash.message}</span>
+                        {isNotif && (
+                            <div className="alert alert-success shadow-lg">
+                                <div>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="stroke-current flex-shrink-0 h-6 w-6"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                                        />
+                                    </svg>
+                                    <span>{props.flash.message}</span>
+                                </div>
                             </div>
-                        </div>
-                         }
+                        )}
                         <input
                             type="text"
                             onChange={(title) => setTitle(title.target.value)}
@@ -86,6 +97,38 @@ export default function Dashboard(props) {
                             Simpan
                         </button>
                     </div>
+                    <div className="p-4">
+                        {props.myNews && props.myNews.length > 0 ? props.myNews.map((news, i) => {
+                            return(
+                                <div key={i} className="card m-4 w-full lg:w-96 bg-base-100 shadow-xl">
+                            <div className="card-body">
+                                <h2 className="card-title">
+                                    {news.title}
+                                    {/* <div className="badge badge-secondary">NEW</div> */}
+                                </h2>
+                                <p>{news.desc}</p>
+                                <div className="card-actions justify-end">
+                                    <div className="badge badge-inline">
+                                        {news.category}
+                                    </div>
+                                    <div className="badge badge-outline">
+                                        <Link href={route('edit.news')} method="get" data={{id: news.id}} as="button">
+                                        Edit
+                                        </Link>
+                                    </div>
+                                    <div className="badge badge-outline">
+                                    <Link href={route('delete.news')} method="post" data={{id: news.id}} as="button">
+                                        Delete
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                                )
+                        }) : <p>Anda belum memiliki berita</p>}
+                    
+                    </div>
+                        
                 </div>
             </div>
         </AuthenticatedLayout>

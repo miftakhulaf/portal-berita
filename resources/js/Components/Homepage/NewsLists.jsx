@@ -15,22 +15,20 @@ const isNews = (news) => {
                         <div className="badge badge-inline">
                             {data.category}
                         </div>
-                        <div className="badge badge-outline">{data.author}</div>
+                        {/* <div className="badge badge-outline">{data.author}</div> */}
                     </div>
                 </div>
             </div>
-        )
-    })
-}
+        );
+    });
+};
 
 const noNews = () => {
-    return(
-        <div>Saat ini belum ada berita tersedia</div>
-    )
-}
+    return <div>Saat ini belum ada berita tersedia</div>;
+};
 
 const Newslists = ({ news }) => {
-    return !news ? noNews() : isNews(news)
-}
+    return !news ? noNews() : isNews(news);
+};
 
 export default Newslists;

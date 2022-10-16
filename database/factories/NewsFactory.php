@@ -20,7 +20,7 @@ class NewsFactory extends Factory
             'title' => $this->faker->text(15),
             'desc' => $this->faker->paragraph(2, true),
             'category' => $this->faker->text(10),
-            'author' => $this->faker->name(15),
+            'author' => $this->faker->email(),
         ];
     }
 }
